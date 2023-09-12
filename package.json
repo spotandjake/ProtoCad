@@ -19,6 +19,7 @@
     "react-reflex": "^4.0.9",
     "sass": "^1.66.1",
     "three": "^0.143.0",
+    "three-csg-ts": "^3.1.13",
     "three-js": "^79.0.0",
     "three.meshline": "^1.4.0",
     "wasmoon": "^1.14.0",

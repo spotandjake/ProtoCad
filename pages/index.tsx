@@ -1,10 +1,11 @@
 import Styles from '../Styles/Home.module.scss';
 // NextJs Stuff
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import dynamic from 'next/dynamic';
 import { Terminal as Term } from 'xterm';
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 // TODO: Remove This Compiler Stuff and make it run a configurable
 // TODO: wasm script based on a bash script or something
 import Lua from '../Logic/Compilers/Lua';
@@ -32,6 +33,7 @@ const Home: NextPage = () => {
         terminal.writeln('\t- help\t\t- Shows Help Info');
         terminal.writeln('\t- clear\t\t- Clears Terminal');
         terminal.writeln('\t- run\t\t- Runs The Script And Generates A Model');
+        terminal.writeln('\t- export\t\t- Exports the item as gltf file');
         break;
       case 'clear':
         terminal.clear();
@@ -42,6 +44,30 @@ const Home: NextPage = () => {
         //@ts-ignore
         const value = editorRef.current.editorRef.getValue();
         await Lua(value, terminal, setScene)
+        break;
+      case 'export':
+        // Export our model
+        const exporter = new GLTFExporter();
+        // Parse the input and generate the glTF output
+        exporter.parse(
+          scene,
+          ( gltf ) => {
+            const download = document.createElement('a');
+            download.href = URL.createObjectURL(new Blob([JSON.stringify(gltf)], {type: 'application/json'}));
+            // TODO: Allow naming files
+            download.setAttribute(
+              'download',
+              `export.gltf`,
+            );
+            document.body.appendChild(download);
+            download.click();
+            if (download.parentNode != null) download.parentNode.removeChild(download);
+          },
+          () => {
+            terminal.writeln('Error Exporting Model');
+          },
+          {}
+        );
         break;
       default:
         console.log(command);

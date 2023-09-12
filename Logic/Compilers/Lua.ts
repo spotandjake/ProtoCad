@@ -40,7 +40,6 @@ export default async (code: string, terminal: Terminal, setScene: Dispatch<SetSt
     // Write The Error
     if (err.hasOwnProperty('message') && typeof err.message == 'string') {
       terminal.writeln(err.message);
-      throw err
     } else {
       terminal.writeln('Unknown Error');
     }
